@@ -18,14 +18,6 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
 
-auslassen=['@ademov_eu', '@hans_van_baalen', '@MarioBorghezio', '@JcolombierFN', '@Albert_Dess_MEP',
-           '@BillDudleyNorth', '@raymondfinch', '@JFlackMEP', '@michaelgahler', '@ngriesbeck', 
-           '@JametFrance', '@TeresaJBecerril', '@LanciniOscar', '@LJManscour', '@JoelleMelinFN', 
-           '@Nuno_Melo_CDSPP', '@paulnuttallukip', '@libertarofuturo', '@robertrochefort', 
-           '@PaulRuebig', '@JLSchaffhauser', '@schiderwan', '@MollyScottCato', '@AnnaZaborska',"@TraianUngureanu"]
-
-
-
 #für die (tägliche) Aktualisierung der Datenbank:
 df=pd.read_csv("MyPath.csv")
 parlamentarier=df[df["SCREEN_NAME"].notnull()]
@@ -39,9 +31,8 @@ alle_parteien=parlamentarier["GROUP"].values
 problem_politiker=[]
 all_new_tweets=0
 
-for counter,politiker in enumerate(zip(alle_politiker,alle_länder,alle_parteien)):
-    if politiker[0] not in auslassen:
-        try:
+for counter,politiker in enumerate(zip(alle_politiker,alle_länder,alle_parteien)):           
+           try:
             tweets=api.user_timeline(screen_name =politiker[0],count=100, include_rts = True,tweet_mode='extended') #8min for count=50 - sometimes not enough -> after brexit deal
             count_tweet=0
             for tweet in tweets:
@@ -52,12 +43,12 @@ for counter,politiker in enumerate(zip(alle_politiker,alle_länder,alle_parteien
                         tweet.favorite_count,tweet.lang,
                         tweet.full_text, tweet.entities["hashtags"],tweet.entities['urls'],
                         tweet.entities['user_mentions']])
-    
+
                     count_tweet+=1
                     all_new_tweets+=1
             print(str(counter+1)+"/"+str(len(alle_politiker)),politiker[0],": \t \t "+str(count_tweet)+" neue Tweets")
-        except:
-            print("Name nicht gefunden")
+           except:
+            print("Fehler bei der abfrage der Tweets")
             problem_politiker.append(politiker[0])
             next
 print()
